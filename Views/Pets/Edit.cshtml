@@ -1,0 +1,114 @@
+
+@model Pawhaven.Models.Pet
+
+@{
+    ViewData["Title"] = "Edit Pet";
+}
+
+<h1>Edit Pet 🐾</h1>
+<p class="text-muted">Update your pet's information.</p>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" asp-route-id="@Model.PetId"
+              method="post" enctype="multipart/form-data">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <input type="hidden" asp-for="PetId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label">Pet Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Species" class="form-label">Species</label>
+                <select asp-for="Species" class="form-select">
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                </select>
+                <span asp-validation-for="Species"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Breed" class="form-label">Breed</label>
+                <input asp-for="Breed" class="form-control" />
+                <span asp-validation-for="Breed"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Age" class="form-label">Age (years)</label>
+                <input asp-for="Age" type="number" min="0" max="100"
+                       class="form-control" />
+                <span asp-validation-for="Age"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Size" class="form-label">Pet Size</label>
+                <select asp-for="Size" class="form-select">
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                </select>
+                <span asp-validation-for="Size"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label">Current Picture</label>
+
+                @if (!string.IsNullOrEmpty(Model.PicturePath))
+                {
+                    <div class="mb-2">
+                        <img src="@Model.PicturePath"
+                             alt="@Model.Name"
+                             style="width: 130px; height: 130px; object-fit: cover; border-radius: 12px;" />
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No picture uploaded.</p>
+                }
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="pictureFile" class="form-label">
+                    Change Picture
+                </label>
+                <input type="file"
+                       id="pictureFile"
+                       name="pictureFile"
+                       class="form-control"
+                       accept="image/jpeg,image/png,image/gif,image/webp" />
+                <small class="text-muted">
+                    Leave empty to keep the current picture.
+                </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

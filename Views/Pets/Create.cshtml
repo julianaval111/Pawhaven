@@ -1,0 +1,77 @@
+
+@model Pawhaven.Models.Pet
+@using Pawhaven.Models
+
+@{
+    ViewData["Title"] = "Register a Pet";
+}
+
+<h1>Register a Pet</h1>
+<p class="text-muted">Add your furry friend to Pawhaven.</p>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label">Pet Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Enter your pet's name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Species" class="control-label">Species</label>
+                <select asp-for="Species"
+                        asp-items="Html.GetEnumSelectList<PetSpecies>()"
+                        class="form-select">
+                    <option value="">Select species</option>
+                </select>
+                <span asp-validation-for="Species" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Breed" class="control-label">Breed</label>
+                <input asp-for="Breed" class="form-control" placeholder="e.g., Shih Tzu or Persian" />
+                <span asp-validation-for="Breed" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Age" class="control-label">Age (years)</label>
+                <input asp-for="Age" type="number" min="0" max="100" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Size" class="control-label">Pet Size</label>
+                <select asp-for="Size"
+                        asp-items="Html.GetEnumSelectList<PetSize>()"
+                        class="form-select">
+                    <option value="">Select size</option>
+                </select>
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="pictureFile" class="control-label">Pet Picture</label>
+                <input type="file"
+                       id="pictureFile"
+                       name="pictureFile"
+                       class="form-control"
+                       accept="image/*" />
+                <small class="text-muted">Choose an image of your pet.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register Pet</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

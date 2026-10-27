@@ -426,3 +426,16 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Build output
+bin/
+obj/
+
+# Local SQLite database
+pawhaven.db
+pawhaven.db-shm
+pawhaven.db-wal
+
+# Uploaded pet pictures (local uploads)
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep

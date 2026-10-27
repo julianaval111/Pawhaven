@@ -1,0 +1,62 @@
+
+@model IEnumerable<Pawhaven.Models.Pet>
+
+@{
+    ViewData["Title"] = "Our Pets";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>Our Pets 🐾</h1>
+        <p class="text-muted">Manage your registered pets here.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">+ Register a Pet</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Picture</th>
+                <th>Pet Name</th>
+                <th>Species</th>
+                <th>Breed</th>
+                <th>Age</th>
+                <th>Size</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.PicturePath))
+                        {
+                            <img src="@item.PicturePath"
+                                 alt="@item.Name"
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No picture</span>
+                        }
+                    </td>
+                    <td class="fw-semibold">@item.Name</td>
+                    <td>@item.Species</td>
+                    <td>@(string.IsNullOrEmpty(item.Breed) ? "Not specified" : item.Breed)</td>
+                    <td>@item.Age years</td>
+                    <td>@item.Size</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.PetId"
+                           class="btn btn-sm btn-outline-info">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.PetId"
+                           class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.PetId"
+                           class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
