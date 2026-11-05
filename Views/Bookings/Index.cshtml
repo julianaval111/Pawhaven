@@ -1,0 +1,96 @@
+@model IEnumerable<Pawhaven.Models.Booking>
+
+@{
+    ViewData["Title"] = "Booking Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Booking Management</h2>
+<p class="text-muted">View and manage customer appointments.</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="Index" method="get" class="row g-2 mb-3">
+
+    <div class="col-md-6">
+        <input name="searchString"
+               value="@ViewData["CurrentFilter"]"
+               class="form-control"
+               placeholder="Search customer, pet, or service..." />
+    </div>
+
+    <div class="col-md-3">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+
+            @foreach (var item in new[] { "Pending", "Approved", "Rejected", "Cancelled" })
+            {
+                if (ViewData["CurrentStatus"]?.ToString() == item)
+                {
+                    <option value="@item" selected>@item</option>
+                }
+                else
+                {
+                    <option value="@item">@item</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-success">Filter</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+
+</form>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body table-responsive">
+
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Customer</th>
+                    <th>Pet</th>
+                    <th>Service</th>
+                    <th>Appointment</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="searchResults">
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td>@booking.Owner?.FullName</td>
+                        <td>@booking.Pet?.PetName</td>
+                        <td>@booking.GroomingService?.ServiceName</td>
+                        <td>@booking.AppointmentDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                        <td>@booking.Status</td>
+                        <td>
+                            <a asp-action="Edit"
+                               asp-route-id="@booking.BookingId"
+                               class="btn btn-sm btn-outline-primary">
+                                Update Status
+                            </a>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            No bookings found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

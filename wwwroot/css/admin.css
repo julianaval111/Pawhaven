@@ -1,0 +1,21 @@
+body {
+    background-color: #f5f7f8;
+    font-family: Arial, sans-serif;
+}
+
+.admin-navbar {
+    background-color: #174c3c;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.card h2 {
+    color: #174c3c;
+    font-weight: 700;
+}
+
+.table {
+    background-color: white;
+}

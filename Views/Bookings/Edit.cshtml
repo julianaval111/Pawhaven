@@ -1,0 +1,41 @@
+@model Pawhaven.Models.Booking
+
+@{
+    ViewData["Title"] = "Update Booking";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Update Booking Status</h2>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+
+        <p><strong>Customer:</strong> @Model.Owner?.FullName</p>
+        <p><strong>Pet:</strong> @Model.Pet?.PetName</p>
+        <p><strong>Service:</strong> @Model.GroomingService?.ServiceName</p>
+        <p><strong>Appointment:</strong> @Model.AppointmentDate.ToString("MMM dd, yyyy hh:mm tt")</p>
+
+        <hr />
+
+        <form asp-action="Edit" method="post">
+
+            <input type="hidden" name="id" value="@Model.BookingId" />
+
+            <div class="mb-3">
+                <label class="form-label">Booking Status</label>
+
+                <select name="status"
+                        asp-items="ViewBag.Statuses"
+                        class="form-select">
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                Save Status
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+        </form>
+    </div>
+</div>
