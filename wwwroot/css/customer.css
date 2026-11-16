@@ -1,0 +1,23 @@
+.customer-page {
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+
+.customer-card {
+    border: none;
+    border-radius: 14px;
+    transition: transform 0.2s ease;
+}
+
+.customer-card:hover {
+    transform: translateY(-4px);
+}
+
+.customer-section-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.customer-btn {
+    border-radius: 8px;
+}

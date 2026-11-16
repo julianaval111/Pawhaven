@@ -1,0 +1,42 @@
+
+@model Pawhaven.Models.GroomingService
+
+@{
+    ViewData["Title"] = "Service Details";
+}
+
+<div class="container py-5">
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <h2>@Model.ServiceName</h2>
+
+            <p class="text-muted">
+                @Model.Description
+            </p>
+
+            <h3 class="text-success">
+                ₱@Model.Price.ToString("N2")
+            </h3>
+
+            <div class="mt-4">
+
+                <a asp-controller="CustomerBookings"
+                   asp-action="Create"
+                   asp-route-serviceId="@Model.ServiceId"
+                   class="btn btn-success">
+                    Book This Service
+                </a>
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Back to Services
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
