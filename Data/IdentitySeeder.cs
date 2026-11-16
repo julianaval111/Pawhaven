@@ -12,18 +12,21 @@ namespace Pawhaven.Data
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var configuration = services.GetRequiredService<IConfiguration>();
 
-            const string roleName = "Admin";
+            // Create Admin and Customer roles if they do not exist
+            string[] roleNames = { "Admin", "Customer" };
 
-            // Create Admin role if it does not exist
-            if (!await roleManager.RoleExistsAsync(roleName))
+            foreach (var roleName in roleNames)
             {
-                var roleResult = await roleManager.CreateAsync(
-                    new IdentityRole(roleName));
-
-                if (!roleResult.Succeeded)
+                if (!await roleManager.RoleExistsAsync(roleName))
                 {
-                    throw new Exception(string.Join("; ",
-                        roleResult.Errors.Select(e => e.Description)));
+                    var roleResult = await roleManager.CreateAsync(
+                        new IdentityRole(roleName));
+
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            roleResult.Errors.Select(e => e.Description)));
+                    }
                 }
             }
 
@@ -75,9 +78,9 @@ namespace Pawhaven.Data
             }
 
             // Assign Admin role
-            if (!await userManager.IsInRoleAsync(admin, roleName))
+            if (!await userManager.IsInRoleAsync(admin, "Admin"))
             {
-                var roleResult = await userManager.AddToRoleAsync(admin, roleName);
+                var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
 
                 if (!roleResult.Succeeded)
                 {
