@@ -1,0 +1,75 @@
+
+@model IEnumerable<Pawhaven.Models.Pet>
+
+@{
+    ViewData["Title"] = "Registered Pets";
+}
+
+<div class="container mt-4">
+
+    <h2>Registered Pets</h2>
+    <p>View pets registered by Pawhaven customers.</p>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Back to Dashboard
+    </a>
+
+    <form asp-action="Pets" method="get" class="d-flex gap-2">
+        <input type="text"
+               name="searchString"
+               value="@ViewBag.SearchString"
+               class="form-control"
+               placeholder="Search pet or owner..." />
+
+        <button type="submit" class="btn btn-primary">
+            Search
+        </button>
+
+        <a asp-action="Pets" class="btn btn-outline-secondary">
+            Clear
+        </a>
+    </form>
+
+</div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Pet Name</th>
+                        <th>Pet Type</th>
+                        <th>Breed</th>
+                        <th>Age</th>
+                        <th>Owner</th>
+                        <th>Owner Email</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var pet in Model)
+                    {
+                        <tr>
+                            <td>@pet.PetName</td>
+                            <td>@pet.PetType</td>
+                            <td>@pet.Breed</td>
+                            <td>@pet.Age</td>
+                            <td>@pet.Owner?.FullName</td>
+                            <td>@pet.Owner?.Email</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No registered pets found.
+        </div>
+    }
+
+</div>

@@ -1,0 +1,77 @@
+
+@model Pawhaven.Models.Booking
+
+@{
+    ViewData["Title"] = "Book a Grooming Service";
+}
+
+<div class="container mt-4">
+    <h2>Book a Grooming Service</h2>
+    <p>Fill in the details to request your appointment.</p>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Create" method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="PetId" class="form-label">Select Your Pet</label>
+                    <select asp-for="PetId"
+                            asp-items="ViewBag.Pets"
+                            class="form-select">
+                        <option value="">Choose a pet</option>
+                    </select>
+                    <span asp-validation-for="PetId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ServiceId" class="form-label">Grooming Service</label>
+                    <select asp-for="ServiceId"
+                            asp-items="ViewBag.Services"
+                            class="form-select">
+                        <option value="">Choose a service</option>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AppointmentDate" class="form-label">
+                        Preferred Appointment Date and Time
+                    </label>
+                    <input asp-for="AppointmentDate"
+                           type="datetime-local"
+                           class="form-control" />
+                    <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Notes" class="form-label">
+                        Additional Notes
+                    </label>
+                    <textarea asp-for="Notes"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Special requests or instructions"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Submit Booking
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,56 @@
+@model Pawhaven.Models.Pet
+
+@{
+    ViewData["Title"] = "Edit Pet";
+}
+
+<h2>Edit Pet</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+
+            <input type="hidden" asp-for="PetId" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="PetName" class="form-label"></label>
+                <input asp-for="PetName" class="form-control" />
+                <span asp-validation-for="PetName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PetType" class="form-label"></label>
+                <select asp-for="PetType" class="form-select">
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span asp-validation-for="PetType" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Breed" class="form-label"></label>
+                <input asp-for="Breed" class="form-control" />
+                <span asp-validation-for="Breed" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Age" class="form-label"></label>
+                <input asp-for="Age" class="form-control" type="number" min="0" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

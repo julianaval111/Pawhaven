@@ -12,8 +12,8 @@ namespace Pawhaven.Data
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var configuration = services.GetRequiredService<IConfiguration>();
 
-            // Create Admin and Customer roles if they do not exist
-            string[] roleNames = { "Admin", "Customer" };
+            // Create Admin, Staff, and Customer roles
+            string[] roleNames = { "Admin", "Staff", "Customer" };
 
             foreach (var roleName in roleNames)
             {
@@ -30,62 +30,120 @@ namespace Pawhaven.Data
                 }
             }
 
-            // Get admin credentials from Codespaces Secrets
-            var username = configuration["AdminAccount:Username"];
-            var email = configuration["AdminAccount:Email"];
-            var password = configuration["AdminAccount:Password"];
+            // ADMIN ACCOUNT
+            var adminUsername = configuration["AdminAccount:Username"];
+            var adminEmail = configuration["AdminAccount:Email"];
+            var adminPassword = configuration["AdminAccount:Password"];
 
-            if (string.IsNullOrWhiteSpace(username) ||
-                string.IsNullOrWhiteSpace(password))
+            if (!string.IsNullOrWhiteSpace(adminUsername) &&
+                !string.IsNullOrWhiteSpace(adminPassword))
             {
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                email = $"{username}@pawhaven.local";
-            }
-
-            var admin = await userManager.FindByEmailAsync(email);
-
-            if (admin == null)
-            {
-                admin = new ApplicationUser
+                if (string.IsNullOrWhiteSpace(adminEmail))
                 {
-                    UserName = username,
-                    Email = email,
-                    FullName = "Pawhaven Administrator",
-                    EmailConfirmed = true
-                };
+                    adminEmail = $"{adminUsername}@pawhaven.local";
+                }
 
-                var result = await userManager.CreateAsync(admin, password);
+                var admin = await userManager.FindByEmailAsync(adminEmail);
 
-                if (!result.Succeeded)
+                if (admin == null)
                 {
-                    throw new Exception(string.Join("; ",
-                        result.Errors.Select(e => e.Description)));
+                    admin = new ApplicationUser
+                    {
+                        UserName = adminUsername,
+                        Email = adminEmail,
+                        FullName = "Pawhaven Administrator",
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(admin, adminPassword);
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            result.Errors.Select(e => e.Description)));
+                    }
+                }
+                else if (admin.UserName != adminUsername)
+                {
+                    var result = await userManager.SetUserNameAsync(
+                        admin, adminUsername);
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            result.Errors.Select(e => e.Description)));
+                    }
+                }
+
+                if (!await userManager.IsInRoleAsync(admin, "Admin"))
+                {
+                    var roleResult = await userManager.AddToRoleAsync(
+                        admin, "Admin");
+
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            roleResult.Errors.Select(e => e.Description)));
+                    }
                 }
             }
-            else if (admin.UserName != username)
-            {
-                var result = await userManager.SetUserNameAsync(admin, username);
 
-                if (!result.Succeeded)
+            // STAFF ACCOUNT
+            var staffUsername = configuration["StaffAccount:Username"];
+            var staffEmail = configuration["StaffAccount:Email"];
+            var staffPassword = configuration["StaffAccount:Password"];
+
+            if (!string.IsNullOrWhiteSpace(staffUsername) &&
+                !string.IsNullOrWhiteSpace(staffPassword))
+            {
+                if (string.IsNullOrWhiteSpace(staffEmail))
                 {
-                    throw new Exception(string.Join("; ",
-                        result.Errors.Select(e => e.Description)));
+                    staffEmail = $"{staffUsername}@pawhaven.local";
                 }
-            }
 
-            // Assign Admin role
-            if (!await userManager.IsInRoleAsync(admin, "Admin"))
-            {
-                var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
+                var staff = await userManager.FindByEmailAsync(staffEmail);
 
-                if (!roleResult.Succeeded)
+                if (staff == null)
                 {
-                    throw new Exception(string.Join("; ",
-                        roleResult.Errors.Select(e => e.Description)));
+                    staff = new ApplicationUser
+                    {
+                        UserName = staffUsername,
+                        Email = staffEmail,
+                        FullName = "Pawhaven Staff",
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(
+                        staff, staffPassword);
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            result.Errors.Select(e => e.Description)));
+                    }
+                }
+                else if (staff.UserName != staffUsername)
+                {
+                    var result = await userManager.SetUserNameAsync(
+                        staff, staffUsername);
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            result.Errors.Select(e => e.Description)));
+                    }
+                }
+
+                if (!await userManager.IsInRoleAsync(staff, "Staff"))
+                {
+                    var roleResult = await userManager.AddToRoleAsync(
+                        staff, "Staff");
+
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ",
+                            roleResult.Errors.Select(e => e.Description)));
+                    }
                 }
             }
         }

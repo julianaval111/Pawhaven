@@ -12,45 +12,111 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Pawhaven</a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <!-- Pawhaven Brand -->
+                <a class="navbar-brand fw-bold"
+                   asp-controller="Home"
+                   asp-action="Index">
+                    Pawhaven
+                </a>
+
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
+                <div class="navbar-collapse collapse" id="mainNavbar">
 
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
+                    <!-- LEFT NAVIGATION -->
+                    <ul class="navbar-nav me-auto">
 
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="CustomerServices" asp-action="Index">
-                            Grooming Services
-                        </a>
-                    </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Admin"
+                                       asp-action="Index">
+                                        Admin Dashboard
+                                    </a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Staff"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Staff"
+                                       asp-action="Index">
+                                        Staff Dashboard
+                                    </a>
+                                </li>
 
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="CustomerBookings" asp-action="Index">
-                                My Bookings
-                            </a>
-                        </li>
-                    }
-                </ul>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Staff"
+                                       asp-action="Bookings">
+                                        Bookings
+                                    </a>
+                                </li>
 
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Staff"
+                                       asp-action="Pets">
+                                        View Pets
+                                    </a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Customer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="CustomerServices"
+                                       asp-action="Index">
+                                        Grooming Services
+                                    </a>
+                                </li>
 
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="CustomerPets"
+                                       asp-action="Index">
+                                        My Pets
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="CustomerBookings"
+                                       asp-action="Index">
+                                        My Bookings
+                                    </a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Decorative quote for guests -->
+                            <li class="nav-item">
+                                <span class="nav-link text-muted fst-italic">
+                                    "Where every paw feels at home."
+                                </span>
+                            </li>
+                        }
+
+                    </ul>
+
+                    <!-- RIGHT NAVIGATION -->
                     <ul class="navbar-nav">
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
                                 <span class="nav-link text-dark">
@@ -59,9 +125,13 @@
                             </li>
 
                             <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                <form asp-controller="Account"
+                                      asp-action="Logout"
+                                      method="post">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="nav-link btn btn-link text-dark">
+
+                                    <button type="submit"
+                                            class="nav-link btn btn-link text-dark">
                                         Logout
                                     </button>
                                 </form>
@@ -70,12 +140,16 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                <a class="nav-link text-dark"
+                                   asp-controller="Account"
+                                   asp-action="Login">
                                     Login
                                 </a>
                             </li>
                         }
+
                     </ul>
+
                 </div>
             </div>
         </nav>
@@ -89,8 +163,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - Pawhaven -
-            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - Pawhaven
         </div>
     </footer>
 

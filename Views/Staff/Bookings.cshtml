@@ -1,0 +1,91 @@
+
+@model IEnumerable<Pawhaven.Models.Booking>
+
+@{
+    ViewData["Title"] = "Manage Bookings";
+}
+
+<div class="container mt-4">
+
+    <h2>Customer Bookings</h2>
+    <p>View appointment requests and update their status.</p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <a asp-action="Index" class="btn btn-secondary mb-3">
+        Back to Dashboard
+    </a>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Pet</th>
+                        <th>Service</th>
+                        <th>Appointment</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td>@booking.Owner?.FullName</td>
+                            <td>@booking.Pet?.PetName</td>
+                            <td>@booking.GroomingService?.ServiceName</td>
+                            <td>@booking.AppointmentDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                            <td>@booking.Status</td>
+                            <td>
+                                <form asp-action="UpdateStatus" method="post">
+                                    <input type="hidden"
+                                           name="bookingId"
+                                           value="@booking.BookingId" />
+
+                                    <select name="status" class="form-select mb-2">
+                                        <option value="Pending"
+                                            selected="@(booking.Status == "Pending")">
+                                            Pending
+                                        </option>
+                                        <option value="Approved"
+                                            selected="@(booking.Status == "Approved")">
+                                            Approved
+                                        </option>
+                                        <option value="Rejected"
+                                            selected="@(booking.Status == "Rejected")">
+                                            Rejected
+                                        </option>
+                                        <option value="Cancelled"
+                                            selected="@(booking.Status == "Cancelled")">
+                                            Cancelled
+                                        </option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        Save Status
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            There are no customer bookings yet.
+        </div>
+    }
+
+</div>

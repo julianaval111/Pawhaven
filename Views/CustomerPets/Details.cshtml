@@ -1,0 +1,30 @@
+@model Pawhaven.Models.Pet
+
+@{
+    ViewData["Title"] = "Pet Details";
+}
+
+<h2>Pet Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Pet Name</dt>
+            <dd class="col-sm-9">@Model.PetName</dd>
+
+            <dt class="col-sm-3">Pet Type</dt>
+            <dd class="col-sm-9">@Model.PetType</dd>
+
+            <dt class="col-sm-3">Breed</dt>
+            <dd class="col-sm-9">@Model.Breed</dd>
+
+            <dt class="col-sm-3">Age</dt>
+            <dd class="col-sm-9">@Model.Age</dd>
+        </dl>
+
+        <a asp-action="Edit" asp-route-id="@Model.PetId"
+           class="btn btn-warning">Edit</a>
+
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</div>

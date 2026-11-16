@@ -1,0 +1,57 @@
+@model IEnumerable<Pawhaven.Models.Pet>
+
+@{
+    ViewData["Title"] = "My Pets";
+}
+
+<h2>My Pets</h2>
+
+<p>Manage the pets registered under your account.</p>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    Add New Pet
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Pet Name</th>
+            <th>Pet Type</th>
+            <th>Breed</th>
+            <th>Age</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+    <tbody>
+        @foreach (var pet in Model)
+        {
+            <tr>
+                <td>@pet.PetName</td>
+                <td>@pet.PetType</td>
+                <td>@pet.Breed</td>
+                <td>@pet.Age</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@pet.PetId"
+                       class="btn btn-info btn-sm">Details</a>
+
+                    <a asp-action="Edit" asp-route-id="@pet.PetId"
+                       class="btn btn-warning btn-sm">Edit</a>
+
+                    <a asp-action="Delete" asp-route-id="@pet.PetId"
+                       class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p>You haven't registered any pets yet. Click Add New Pet to get started.</p>
+}

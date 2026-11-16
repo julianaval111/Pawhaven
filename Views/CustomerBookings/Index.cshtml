@@ -1,0 +1,61 @@
+
+@model IEnumerable<Pawhaven.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container mt-4">
+
+    <h2>My Bookings</h2>
+    <p>View your grooming appointments and booking status.</p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <a asp-controller="CustomerServices"
+       asp-action="Index"
+       class="btn btn-success mb-3">
+        Book a Service
+    </a>
+
+    @if (Model.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Pet</th>
+                    <th>Grooming Service</th>
+                    <th>Appointment Date</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td>@booking.Pet?.PetName</td>
+                        <td>@booking.GroomingService?.ServiceName</td>
+                        <td>@booking.AppointmentDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                        <td>@booking.Status</td>
+                        <td>@booking.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            You don't have any bookings yet.
+            Browse our grooming services to make your first appointment!
+        </div>
+    }
+
+</div>
