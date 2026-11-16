@@ -7,7 +7,7 @@
 
 <div class="container mt-4">
     <h2>Book a Grooming Service</h2>
-    <p>Fill in the details to request your appointment.</p>
+    <p>Choose your pet, grooming service, date, and available appointment time.</p>
 
     <div class="card shadow-sm">
         <div class="card-body">
@@ -30,20 +30,44 @@
                     <label asp-for="ServiceId" class="form-label">Grooming Service</label>
                     <select asp-for="ServiceId"
                             asp-items="ViewBag.Services"
-                            class="form-select">
+                            class="form-select"
+                            id="serviceId">
                         <option value="">Choose a service</option>
                     </select>
                     <span asp-validation-for="ServiceId" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Appointment Date</label>
+                    <input type="date"
+                           id="appointmentDate"
+                           class="form-control"
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           required />
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="AppointmentDate" class="form-label">
-                        Preferred Appointment Date and Time
+                        Available Appointment Time
                     </label>
-                    <input asp-for="AppointmentDate"
-                           type="datetime-local"
-                           class="form-control" />
-                    <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+
+                    <select id="appointmentTime"
+                            class="form-select"
+                            required
+                            disabled>
+                        <option value="">Select a date first</option>
+                    </select>
+
+                    <input type="hidden"
+                           asp-for="AppointmentDate"
+                           id="appointmentDateTime" />
+
+                    <span asp-validation-for="AppointmentDate"
+                          class="text-danger"></span>
+
+                    <small class="text-muted">
+                        Operating hours: 9:00 AM to 6:00 PM, Monday to Sunday.
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -57,7 +81,10 @@
                     <span asp-validation-for="Notes" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn btn-success">
+                <button type="submit"
+                        id="submitBooking"
+                        class="btn btn-success"
+                        disabled>
                     Submit Booking
                 </button>
 
@@ -74,4 +101,81 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        const serviceSelect = document.getElementById("serviceId");
+        const dateInput = document.getElementById("appointmentDate");
+        const timeSelect = document.getElementById("appointmentTime");
+        const dateTimeInput = document.getElementById("appointmentDateTime");
+        const submitButton = document.getElementById("submitBooking");
+
+        async function loadAvailableSlots() {
+            timeSelect.innerHTML = '<option value="">Loading available times...</option>';
+            timeSelect.disabled = true;
+            submitButton.disabled = true;
+            dateTimeInput.value = "";
+
+            const serviceId = serviceSelect.value;
+            const date = dateInput.value;
+
+            if (!serviceId || !date) {
+                timeSelect.innerHTML = '<option value="">Select a service and date first</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `/CustomerBookings/AvailableSlots?serviceId=${encodeURIComponent(serviceId)}&date=${encodeURIComponent(date)}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Unable to load available times.");
+                }
+
+                const slots = await response.json();
+
+                timeSelect.innerHTML = "";
+
+                if (slots.length === 0) {
+                    timeSelect.innerHTML =
+                        '<option value="">No available times for this date</option>';
+                    return;
+                }
+
+                timeSelect.innerHTML =
+                    '<option value="">Choose an appointment time</option>';
+
+                slots.forEach(slot => {
+                    const option = document.createElement("option");
+                    option.value = slot.value;
+                    option.textContent = slot.label;
+                    timeSelect.appendChild(option);
+                });
+
+                timeSelect.disabled = false;
+            }
+            catch (error) {
+                timeSelect.innerHTML =
+                    '<option value="">Unable to load times. Please try again.</option>';
+                console.error(error);
+            }
+        }
+
+        function updateAppointmentDateTime() {
+            if (!dateInput.value || !timeSelect.value) {
+                dateTimeInput.value = "";
+                submitButton.disabled = true;
+                return;
+            }
+
+            dateTimeInput.value =
+                `${dateInput.value}T${timeSelect.value}`;
+
+            submitButton.disabled = false;
+        }
+
+        dateInput.addEventListener("change", loadAvailableSlots);
+        serviceSelect.addEventListener("change", loadAvailableSlots);
+        timeSelect.addEventListener("change", updateAppointmentDateTime);
+    </script>
 }

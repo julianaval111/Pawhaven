@@ -116,6 +116,7 @@ namespace Pawhaven.Controllers
                 existing.ServiceName = service.ServiceName;
                 existing.Description = service.Description;
                 existing.Price = service.Price;
+                existing.DurationMinutes = service.DurationMinutes;
                 existing.IsActive = service.IsActive;
 
                 await _context.SaveChangesAsync();

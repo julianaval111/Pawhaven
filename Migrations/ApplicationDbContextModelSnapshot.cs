@@ -223,6 +223,10 @@ namespace Pawhaven.Migrations
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("GoogleCalendarEventId")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(300)
                         .HasColumnType("TEXT");
@@ -262,6 +266,11 @@ namespace Pawhaven.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(300)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("DurationMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(60);
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");

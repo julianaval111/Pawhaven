@@ -1,11 +1,17 @@
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pawhaven.Data;
 using Pawhaven.Models;
+using Pawhaven.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+// Register services
+builder.Services.AddScoped<GoogleCalendarService>();
+builder.Services.AddScoped<BookingAvailabilityService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(

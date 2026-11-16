@@ -6,19 +6,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pawhaven.Data;
 using Pawhaven.Models;
+using Pawhaven.Services;
 
 [Authorize(Roles = "Customer")]
 public class CustomerBookingsController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly BookingAvailabilityService _availabilityService;
 
     public CustomerBookingsController(
         ApplicationDbContext context,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        BookingAvailabilityService availabilityService)
     {
         _context = context;
         _userManager = userManager;
+        _availabilityService = availabilityService;
     }
 
     // GET: CustomerBookings
@@ -40,22 +44,47 @@ public class CustomerBookingsController : Controller
     public async Task<IActionResult> Create(int serviceId)
     {
         var service = await _context.GroomingServices
-            .FirstOrDefaultAsync(s => s.ServiceId == serviceId && s.IsActive);
+            .FirstOrDefaultAsync(s =>
+                s.ServiceId == serviceId && s.IsActive);
 
         if (service == null)
-        {
             return NotFound();
-        }
 
         await LoadDropdowns(serviceId);
 
         var booking = new Booking
         {
             ServiceId = serviceId,
-            AppointmentDate = DateTime.Today.AddDays(1)
+            AppointmentDate = DateTime.Today.AddDays(1).AddHours(9)
         };
 
         return View(booking);
+    }
+
+    // GET: CustomerBookings/AvailableSlots
+    [HttpGet]
+    public async Task<IActionResult> AvailableSlots(
+        int serviceId,
+        DateTime date)
+    {
+        var service = await _context.GroomingServices
+            .FirstOrDefaultAsync(s =>
+                s.ServiceId == serviceId && s.IsActive);
+
+        if (service == null)
+            return NotFound();
+
+        var slots = await _availabilityService.GetAvailableSlotsAsync(
+            date,
+            service.DurationMinutes);
+
+        var result = slots.Select(slot => new
+        {
+            value = slot.ToString("HH:mm"),
+            label = slot.ToString("hh:mm tt")
+        });
+
+        return Json(result);
     }
 
     // POST: CustomerBookings/Create
@@ -65,13 +94,11 @@ public class CustomerBookingsController : Controller
     {
         var userId = _userManager.GetUserId(User);
 
-        // Check if the selected pet belongs to the customer
         var pet = await _context.Pets
             .FirstOrDefaultAsync(p =>
                 p.PetId == booking.PetId &&
                 p.UserId == userId);
 
-        // Check if the selected service is active
         var service = await _context.GroomingServices
             .FirstOrDefaultAsync(s =>
                 s.ServiceId == booking.ServiceId &&
@@ -79,27 +106,46 @@ public class CustomerBookingsController : Controller
 
         if (pet == null)
         {
-            ModelState.AddModelError("PetId", "Please select one of your registered pets.");
+            ModelState.AddModelError(
+                "PetId",
+                "Please select one of your registered pets.");
         }
 
         if (service == null)
         {
-            ModelState.AddModelError("ServiceId", "Please select a valid grooming service.");
+            ModelState.AddModelError(
+                "ServiceId",
+                "Please select a valid grooming service.");
         }
 
         booking.UserId = userId!;
         booking.Status = "Pending";
 
         ModelState.Remove("UserId");
+        ModelState.Remove("Owner");
 
         if (ModelState.IsValid && pet != null && service != null)
         {
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
+            var available = await _availabilityService.IsAvailableAsync(
+                booking.AppointmentDate,
+                service.DurationMinutes);
 
-            TempData["Success"] = "Your grooming appointment has been submitted!";
+            if (!available)
+            {
+                ModelState.AddModelError(
+                    "AppointmentDate",
+                    "This appointment time is unavailable. Please select another time.");
+            }
+            else
+            {
+                _context.Bookings.Add(booking);
+                await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+                TempData["Success"] =
+                    "Your grooming appointment has been submitted!";
+
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         await LoadDropdowns(booking.ServiceId);
@@ -120,7 +166,10 @@ public class CustomerBookingsController : Controller
             .Where(s => s.IsActive)
             .ToListAsync();
 
-        ViewBag.Pets = new SelectList(pets, "PetId", "PetName");
-        ViewBag.Services = new SelectList(services, "ServiceId", "ServiceName", serviceId);
+        ViewBag.Pets = new SelectList(
+            pets, "PetId", "PetName");
+
+        ViewBag.Services = new SelectList(
+            services, "ServiceId", "ServiceName", serviceId);
     }
 }

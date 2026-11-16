@@ -46,8 +46,12 @@ namespace Pawhaven.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<GroomingService>()
-                .Property(s => s.Price)
-                .HasPrecision(10, 2);
+    .Property(s => s.Price)
+    .HasPrecision(10, 2);
+
+builder.Entity<GroomingService>()
+    .Property(s => s.DurationMinutes)
+    .HasDefaultValue(60);
         }
     }
 }

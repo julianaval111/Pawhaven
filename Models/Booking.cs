@@ -34,5 +34,7 @@ namespace Pawhaven.Models
 
         [StringLength(300)]
         public string? Notes { get; set; }
+        [StringLength(200)]
+public string? GoogleCalendarEventId { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+
 @model Pawhaven.Models.GroomingService
 
 @{
@@ -20,9 +21,7 @@
                 <label asp-for="ServiceName" class="form-label">
                     Service Name
                 </label>
-
                 <input asp-for="ServiceName" class="form-control" />
-
                 <span asp-validation-for="ServiceName"
                       class="text-danger"></span>
             </div>
@@ -31,11 +30,9 @@
                 <label asp-for="Description" class="form-label">
                     Description
                 </label>
-
                 <textarea asp-for="Description"
                           class="form-control"
                           rows="3"></textarea>
-
                 <span asp-validation-for="Description"
                       class="text-danger"></span>
             </div>
@@ -44,14 +41,28 @@
                 <label asp-for="Price" class="form-label">
                     Price (₱)
                 </label>
-
                 <input asp-for="Price"
                        type="number"
                        step="0.01"
                        class="form-control" />
-
                 <span asp-validation-for="Price"
                       class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DurationMinutes" class="form-label">
+                    Service Duration (minutes)
+                </label>
+                <input asp-for="DurationMinutes"
+                       type="number"
+                       min="1"
+                       max="1440"
+                       class="form-control" />
+                <span asp-validation-for="DurationMinutes"
+                      class="text-danger"></span>
+                <small class="text-muted">
+                    Enter the estimated time needed to complete this service.
+                </small>
             </div>
 
             <input type="hidden" asp-for="IsActive" value="true" />

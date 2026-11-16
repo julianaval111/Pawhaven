@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Pawhaven.Models
@@ -17,6 +18,10 @@ namespace Pawhaven.Models
         [Required]
         [Range(0.01, 100000)]
         public decimal Price { get; set; }
+
+        [Required]
+        [Range(1, 1440)]
+        public int DurationMinutes { get; set; } = 60;
 
         public bool IsActive { get; set; } = true;
 
