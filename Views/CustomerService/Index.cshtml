@@ -1,0 +1,82 @@
+
+@model IEnumerable<Pawhaven.Models.GroomingService>
+
+@{
+    ViewData["Title"] = "Our Grooming Services";
+}
+
+<div class="container py-4">
+
+    <div class="text-center mb-4">
+        <h1>Our Grooming Services</h1>
+        <p class="text-muted">
+            Give your furry friends the care they deserve.
+        </p>
+    </div>
+
+    <form asp-action="Index"
+          method="get"
+          class="mb-4">
+
+        <div class="input-group">
+            <input type="text"
+                   name="searchString"
+                   value="@ViewData["CurrentFilter"]"
+                   class="form-control"
+                   placeholder="Search grooming services..." />
+
+            <button type="submit"
+                    class="btn btn-success">
+                Search
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Clear
+            </a>
+        </div>
+    </form>
+
+    <div class="row g-4">
+
+        @foreach (var service in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            @service.ServiceName
+                        </h5>
+
+                        <p class="text-muted">
+                            @service.Description
+                        </p>
+
+                        <h4 class="text-success">
+                            ₱@service.Price.ToString("N2")
+                        </h4>
+
+                        <a asp-action="Details"
+                           asp-route-id="@service.ServiceId"
+                           class="btn btn-outline-success mt-2">
+                            View Details
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center text-muted mt-4">
+            No grooming services found.
+        </p>
+    }
+
+</div>
